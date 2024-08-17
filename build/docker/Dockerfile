@@ -2,7 +2,7 @@
 FROM python:3.11-alpine as builder
 
 LABEL MAINTAINER="la-cc@github"
-LABEL org.opencontainers.image.source="https://github.com/la-cc/k8s-pg-to-s3-cronjob"
+LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
 LABEL EMAIL="artem@lajko.dev"
 
 # Install build dependencies
@@ -29,15 +29,14 @@ RUN curl -LO https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz && \
     rm -rf linux-amd64 helm-v3.10.0-linux-amd64.tar.gz
 
 # Install GPTScript
-RUN curl https://get.gptscript.ai/install.sh | sh && \
-    mkdir -p /.cache && chmod 777 /.cache
+RUN curl https://get.gptscript.ai/install.sh | sh
 
 # Second stage: Setup with non-root user
 FROM python:3.11-alpine
 
 # Metadata as defined in OCI image spec annotations
 LABEL MAINTAINER="la-cc@github"
-LABEL org.opencontainers.image.source="https://github.com/la-cc/k8s-pg-to-s3-cronjob"
+LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
 LABEL EMAIL="artem@lajko.dev"
 
 # Set environment variables
@@ -46,6 +45,7 @@ ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
+ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -59,10 +59,12 @@ RUN apk add --no-cache \
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
 COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
 COPY --from=builder /usr/local/bin/gptscript /usr/local/bin/gptscript
-COPY --from=builder /.cache /.cache
 
 # Create a non-root user 'agentuser'
 RUN addgroup -S agentuser && adduser -S agentuser -G agentuser
+
+# Create cache directory with appropriate permissions
+RUN mkdir -p $GPTSCRIPT_CACHE_DIR && chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR
 
 # Set work directory and switch to non-root user
 WORKDIR /home/agentuser
@@ -72,4 +74,4 @@ USER agentuser
 
 # Default command to run a specific agent based on env variables
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["gptscript --workspace /home/agentuser/gpt-agents --disable-cache --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+CMD ["gptscript --workspace /home/agentuser/gpt-agents --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
