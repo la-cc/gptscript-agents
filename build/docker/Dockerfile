@@ -45,9 +45,7 @@ ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
-ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
-ENV GPTSCRIPT_WORKSPACE="/home/agentuser/workspace"
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -85,4 +83,4 @@ USER agentuser
 ENTRYPOINT ["/bin/bash", "-c"]
 #CMD ["sleep infinity"]
 
-CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+CMD ["gptscript --disable-cache --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
