@@ -28,7 +28,7 @@ RUN curl -LO https://get.helm.sh/helm-v3.10.0-linux-amd64.tar.gz && \
     mv linux-amd64/helm /usr/local/bin/helm && \
     rm -rf linux-amd64 helm-v3.10.0-linux-amd64.tar.gz
 
-# Install GPTScript
+# Install GPTScript (the script handles placing the binary in /usr/local/bin)
 RUN curl https://get.gptscript.ai/install.sh | sh
 
 # Second stage: Setup with non-root user
@@ -47,6 +47,7 @@ ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
 ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
+ENV GPTSCRIPT_WORKSPACE="/home/agentuser/workspace"
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -55,6 +56,11 @@ RUN apk add --no-cache \
     jq \
     libstdc++ \
     libgcc
+
+# Copy installed binaries and libraries from the builder stage
+COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
+COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
+COPY --from=builder /usr/local/bin/gptscript /usr/local/bin/gptscript
 
 # Create a non-root user 'agentuser' with specific UID and GID
 RUN addgroup -g 1000 agentuser && adduser -u 1000 -G agentuser -S agentuser
