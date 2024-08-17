@@ -45,6 +45,7 @@ ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
+ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
 
 # Install runtime dependencies
@@ -67,7 +68,7 @@ RUN addgroup -S agentuser && adduser -S agentuser -G agentuser
 RUN mkdir -p $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE /home/agentuser/.config/gptscript && \
     chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE /home/agentuser/.config/gptscript
 
-# Correct the ownership of the home directory and its contents
+# Ensure all directories under /home/agentuser are owned by the non-root user
 RUN chown -R agentuser:agentuser /home/agentuser
 
 # Set work directory and switch to non-root user
@@ -83,4 +84,4 @@ USER agentuser
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["sleep infinity"]
 
-#CMD ["gptscript --disable-cache --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+#CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
