@@ -56,13 +56,8 @@ RUN apk add --no-cache \
     libstdc++ \
     libgcc
 
-# Copy installed binaries and libraries from the builder stage
-COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
-COPY --from=builder /usr/local/bin/helm /usr/local/bin/helm
-COPY --from=builder /usr/local/bin/gptscript /usr/local/bin/gptscript
-
-# Create a non-root user 'agentuser'
-RUN addgroup -S agentuser && adduser -S agentuser -G agentuser
+# Create a non-root user 'agentuser' with specific UID and GID
+RUN addgroup -g 1000 agentuser && adduser -u 1000 -G agentuser -S agentuser
 
 # Create necessary directories with appropriate permissions
 RUN mkdir -p $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE /home/agentuser/.config/gptscript && \
