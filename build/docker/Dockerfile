@@ -40,7 +40,7 @@ LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agent
 LABEL email="artem@lajko.dev"
 
 # Set environment variables
-ENV GPTSCRIPT_DEFAULT_MODEL="gpt-4-turbo"
+ENV GPTSCRIPT_DEFAULT_MODEL="gpt-4o"
 ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
@@ -84,4 +84,4 @@ USER agentuser
 # Default command for debugging (infinite sleep)
 ENTRYPOINT ["/bin/bash", "-c"]
 
-CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE "$COMMAND_STRING""]
+CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\" | tee /home/agentuser/gptscript.log"]
