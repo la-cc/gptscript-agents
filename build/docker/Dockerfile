@@ -1,9 +1,9 @@
 # First stage: Install tools as root
 FROM python:3.11-alpine as builder
 
-LABEL MAINTAINER="la-cc@github"
+LABEL maintainer="la-cc@github"
 LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
-LABEL EMAIL="artem@lajko.dev"
+LABEL email="artem@lajko.dev"
 
 # Install build dependencies
 RUN apk add --no-cache \
@@ -35,9 +35,9 @@ RUN curl https://get.gptscript.ai/install.sh | sh
 FROM python:3.11-alpine
 
 # Metadata as defined in OCI image spec annotations
-LABEL MAINTAINER="la-cc@github"
+LABEL maintainer="la-cc@github"
 LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
-LABEL EMAIL="artem@lajko.dev"
+LABEL email="artem@lajko.dev"
 
 # Set environment variables
 ENV MODEL="gpt-4-turbo"
@@ -65,15 +65,24 @@ COPY --from=builder /usr/local/bin/gptscript /usr/local/bin/gptscript
 # Create a non-root user 'agentuser'
 RUN addgroup -S agentuser && adduser -S agentuser -G agentuser
 
-# Create cache, config, and workspace directories with appropriate permissions
-RUN mkdir -p $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE && chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE
+# Create necessary directories with appropriate permissions
+RUN mkdir -p $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE /home/agentuser/.config/gptscript && \
+    chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE /home/agentuser/.config/gptscript
+
+# Correct the ownership of the home directory and its contents
+RUN chown -R agentuser:agentuser /home/agentuser
 
 # Set work directory and switch to non-root user
 WORKDIR /home/agentuser
+
+# Copy agent files and change ownership
 COPY /gpt-agents/ /home/agentuser/gpt-agents
+RUN chown -R agentuser:agentuser /home/agentuser/gpt-agents
 
 USER agentuser
 
-# Default command to run a specific agent based on env variables
+# Default command for debugging (infinite sleep)
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+CMD ["sleep infinity"]
+# Uncomment the following line for production use
+# CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
