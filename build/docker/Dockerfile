@@ -81,6 +81,6 @@ USER agentuser
 
 # Default command for debugging (infinite sleep)
 ENTRYPOINT ["/bin/bash", "-c"]
-#CMD ["sleep infinity"]
+CMD ["sleep infinity"]
 
-CMD ["gptscript --disable-cache --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+#CMD ["gptscript --disable-cache --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
