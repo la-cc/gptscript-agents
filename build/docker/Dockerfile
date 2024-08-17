@@ -40,7 +40,7 @@ LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agent
 LABEL email="artem@lajko.dev"
 
 # Set environment variables
-ENV MODEL="gpt-4-turbo"
+ENV GPTSCRIPT_DEFAULT_MODEL="gpt-4-turbo"
 ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
@@ -85,4 +85,4 @@ USER agentuser
 ENTRYPOINT ["/bin/bash", "-c"]
 CMD ["sleep infinity"]
 
-#CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+#CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE "$COMMAND_STRING""]
