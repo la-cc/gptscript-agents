@@ -13,7 +13,7 @@ spec:
       serviceAccountName: gptscript-agent-sa  # Use the ServiceAccount
       containers:
       - name: gptscript-agent
-        image: ghcr.io/la-cc/gpt-script-agents:0.1.2
+        image: ghcr.io/la-cc/gpt-script-agents:0.1.3
         imagePullPolicy: IfNotPresent
         env:
         - name: GPTSCRIPT_DEFAULT_MODEL
@@ -36,6 +36,11 @@ spec:
             configMapKeyRef:
               name: gptscript-agent-config
               key: AGENT_FILE
+        - name: OUTSIDE_AGENTS_FILES
+          valueFrom:
+            configMapKeyRef:
+              name: gptscript-agent-config
+              key: OUTSIDE_AGENTS_FILES
         - name: COMMAND_STRING
           valueFrom:
             configMapKeyRef:
