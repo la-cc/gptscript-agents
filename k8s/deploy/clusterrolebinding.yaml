@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: gptscript-agent-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: gptscript-agent-sa
+  namespace: default  # Ensure this matches the namespace of the ServiceAccount
+roleRef:
+  kind: ClusterRole
+  name: gptscript-agent-clusterrole
+  apiGroup: rbac.authorization.k8s.io

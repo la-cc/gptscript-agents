@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: gptscript-agent-config
 data:
-  MODEL: "gpt-4-turbo"
+  GPTSCRIPT_DEFAULT_MODEL: "gpt-4o"
   OPENAI_BASE_URL: "https://api.openai.com/v1"
   MERGED_AGENT_FILE: "simple-cli-agent.gpt"
   COMMAND_STRING: "Does my cluster has any issues?"

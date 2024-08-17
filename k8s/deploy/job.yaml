@@ -10,16 +10,17 @@ spec:
       labels:
         app: gptscript-agent
     spec:
+      serviceAccountName: gptscript-agent-sa  # Use the ServiceAccount
       containers:
       - name: gptscript-agent
-        image: ghcr.io/la-cc/gpt-script-agents:latest
+        image: ghcr.io/la-cc/gpt-script-agents:0.1.0
         imagePullPolicy: IfNotPresent
         env:
-        - name: MODEL
+        - name: GPTSCRIPT_DEFAULT_MODEL
           valueFrom:
             configMapKeyRef:
               name: gptscript-agent-config
-              key: MODEL
+              key: GPTSCRIPT_DEFAULT_MODEL
         - name: OPENAI_BASE_URL
           valueFrom:
             configMapKeyRef:

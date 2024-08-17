@@ -83,6 +83,5 @@ USER agentuser
 
 # Default command for debugging (infinite sleep)
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["sleep infinity"]
 
-#CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE "$COMMAND_STRING""]
+CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE "$COMMAND_STRING""]
