@@ -47,13 +47,5 @@ spec:
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
-          fsGroup: 1000
-        volumeMounts:
-        - name: gpt-agents-volume
-          mountPath: /home/agentuser/gpt-agents
       restartPolicy: Never
-      volumes:
-      - name: gpt-agents-volume
-        configMap:
-          name: gpt-agents-configmap
   backoffLimit: 4

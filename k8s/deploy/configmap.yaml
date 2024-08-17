@@ -6,4 +6,4 @@ data:
   MODEL: "gpt-4-turbo"
   OPENAI_BASE_URL: "https://api.openai.com/v1"
   MERGED_AGENT_FILE: "simple-cli-agent.gpt"
-  COMMAND_STRING: ""
+  COMMAND_STRING: "Does my cluster has any issues?"
