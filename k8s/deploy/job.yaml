@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: gptscript-agent-job
+  labels:
+    app: gptscript-agent
+spec:
+  template:
+    metadata:
+      labels:
+        app: gptscript-agent
+    spec:
+      containers:
+      - name: gptscript-agent
+        image: ghcr.io/la-cc/gpt-script-agents:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MODEL
+          valueFrom:
+            configMapKeyRef:
+              name: gptscript-agent-config
+              key: MODEL
+        - name: OPENAI_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: gptscript-agent-config
+              key: OPENAI_BASE_URL
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: openai-api-key-secret
+              key: api-key
+        - name: MERGED_AGENT_FILE
+          valueFrom:
+            configMapKeyRef:
+              name: gptscript-agent-config
+              key: MERGED_AGENT_FILE
+        - name: COMMAND_STRING
+          valueFrom:
+            configMapKeyRef:
+              name: gptscript-agent-config
+              key: COMMAND_STRING
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+        volumeMounts:
+        - name: gpt-agents-volume
+          mountPath: /home/agentuser/gpt-agents
+      restartPolicy: Never
+      volumes:
+      - name: gpt-agents-volume
+        configMap:
+          name: gpt-agents-configmap
+  backoffLimit: 4

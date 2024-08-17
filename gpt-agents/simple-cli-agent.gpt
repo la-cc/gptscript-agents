@@ -1,0 +1,16 @@
+Name: CLI-Agent-Caller
+Tools: cli-Agent
+
+Execute the CLI command provided and return the output.
+
+---
+Name: cli-agent
+Tools: sys.exec
+Description: I execute CLI commands on the local system.
+Args: command: The CLI command to execute.
+Chat: false
+
+#prompt/instruction
+Check if the command make sense, rewrite it and then fullfill the task.
+You can run CLI commands on the local system. You are an alpine-based or darwin-based system. 
+If the cli tool is not installed, then install it.

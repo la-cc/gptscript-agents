@@ -1,0 +1,86 @@
+---
+Name: Request Handler Agent
+Description: Handles user requests related to Kubernetes cluster health.
+Context: shared-context
+Agents: prometheus-agent, kubernetes-agent, github-agent
+Chat: false
+
+Receive the user's request about the health of their Kubernetes cluster. First, delegate the task to the Prometheus agent to check for any alerts. If alerts are found, summarize them and pass the information to the GitHub agent. If no alerts are found, delegate the request to the Kubernetes agent to check for any issues. If the Kubernetes agent detects issues, pass only the necessary information to the GitHub agent for further analysis and action. Finally, gather the results and provide a summary to the user.
+
+---
+Name: shared-context
+
+#!sys.echo
+You are a highly efficient assistant specializing in Kubernetes cluster management, Prometheus monitoring, and GitOps workflows.
+Always prioritize minimal output to conserve token usage.
+You are allowed to ask clarifying questions to the relevant agent if information is unclear or incomplete.
+Strive to provide concise and actionable insights to the user.
+
+---
+Name: prometheus-agent
+Description: Checks Prometheus alerts for any issues in the Kubernetes cluster via port-forwarding.
+Context: shared-context
+Tools: check-prometheus, sys.abort
+
+Check for active alerts in Prometheus by setting up port-forwarding to the Prometheus service. If Prometheus is not running, or no alerts are found, pass the request to the Kubernetes agent. Summarize any found alerts briefly, focusing only on critical issues.
+
+If there are no alerts or Prometheus is not available, abort the Prometheus check and pass control to the Kubernetes agent.
+
+---
+Name: check-prometheus
+
+#!/bin/sh
+
+PROMETHEUS_NAMESPACE=$(kubectl get ns --no-headers -o custom-columns=:metadata.name | grep -E '^prometheus$')
+
+if [ -z "$PROMETHEUS_NAMESPACE" ]; then
+    echo "No Prometheus stack detected."
+    exit 1
+fi
+
+kubectl port-forward svc/prometheus-server 9090:9090 -n $PROMETHEUS_NAMESPACE &
+
+ALERTS=$(curl -s 'http://localhost:9090/api/v1/query?query=${query}')
+
+kill %1
+
+if [ -z "$ALERTS" ]; then
+    echo "No alerts found."
+    exit 1
+fi
+
+echo "Alerts found: $ALERTS"
+
+
+---
+Name: kubernetes-agent
+Description: Analyzes the Kubernetes cluster for potential issues if no Prometheus alerts are found.
+Context: shared-context
+Tools: sys.exec
+Parameter: command: The Kubernetes command to be executed for analysis
+Chat: false
+
+Run kubectl commands to check for any issues such as ImagePullBackOff or pod failures. If issues are found, summarize the problem in minimal detail and pass this information to the GitHub agent for further action. If no significant issues are found, inform the Request Handler that the cluster appears to be healthy.
+
+---
+Name: github-agent
+Description: Manages repository changes when issues are detected in the Kubernetes cluster.
+Context: shared-context
+Agents: gitops-agent
+Tools: sys.exec, sys.getenv, sys.download
+Parameter: repo_url: The URL of the repository to clone
+Parameter: branch: The branch to check out or create for the PR
+Parameter: fix_description: A description of the fix to be applied
+Chat: false
+
+Upon receiving information about a Prometheus alert or Kubernetes issue, analyze the problem. If additional information is needed, request it from the relevant agent. Check if the issue relates to a misconfiguration or an inaccessible image. If a problem is identified, request credentials and the repository URL from the GitOps agent. Clone the repository, create a new branch, apply the fix, and attempt to create a PR with the proposed changes. If successful, report the PR link to the Request Handler. If no fix can be applied, report the issue and suggest further action to the Request Handler.
+
+---
+Name: gitops-agent
+Description: Checks for GitOps repositories in the cluster and retrieves necessary credentials.
+Context: shared-context
+Tools: sys.exec, sys.getenv
+Chat: false
+
+Check if the cluster is managed by Argo CD or Flux CD. For Argo CD, look for a Secret with the appropriate annotation. For Flux CD, check for a CRD with the kind "Repository". Return the repository URL and necessary credentials, such as the SSH private key, to the GitHub agent for use in making repository changes.
+

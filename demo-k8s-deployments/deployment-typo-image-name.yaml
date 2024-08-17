@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: typo-image-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: typo-image
+  template:
+    metadata:
+      labels:
+        app: typo-image
+    spec:
+      containers:
+      - name: typo-container
+        image: nginxx:latest # Typo im Image-Namen (nginxx statt nginx)
+        ports:
+        - containerPort: 80

@@ -1,0 +1,14 @@
+Name: CLI-Tool-Caller
+Tools: cli-tool
+
+Execute the CLI command provided and return the output.
+
+---
+Name: cli-tool
+Tools: sys.exec
+Description: I execute CLI commands on the local system.
+Args: command: The CLI command to execute.
+Chat: false
+
+${command}"
+

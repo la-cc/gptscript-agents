@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: env-var-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: env-var-app
+  template:
+    metadata:
+      labels:
+        app: env-var-app
+    spec:
+      containers:
+      - name: env-var-container
+        image: busybox
+        command: ["sh", "-c", "echo $SOME_VAR && sleep 3600"]
+        env:
+        - name: SOME_VAR
+          value: "" # Fehlende oder leere Umgebungsvariable
