@@ -5,5 +5,8 @@ metadata:
 data:
   GPTSCRIPT_DEFAULT_MODEL: "gpt-4o"
   OPENAI_BASE_URL: "https://api.openai.com/v1"
-  MERGED_AGENT_FILE: "simple-cli-agent.gpt"
+  AGENT_FILE: "simple-k8s-fix.gpt"
   COMMAND_STRING: "Does my cluster has any issues?"
+  #GPTSCRIPT_CACHE_DIR: "/home/agentuser/.cache/gptscript"
+  #GPTSCRIPT_CONFIG: "/home/agentuser/.config/gptscript/config.yaml"
+  #GPTSCRIPT_WORKSPACE: "/home/agentuser/workspace"

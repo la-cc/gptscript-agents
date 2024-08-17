@@ -43,7 +43,7 @@ LABEL email="artem@lajko.dev"
 ENV GPTSCRIPT_DEFAULT_MODEL="gpt-4o"
 ENV OPENAI_BASE_URL=""
 ENV OPENAI_API_KEY=""
-ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
+ENV AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
 ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
@@ -84,4 +84,4 @@ USER agentuser
 # Default command for debugging (infinite sleep)
 ENTRYPOINT ["/bin/bash", "-c"]
 
-CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\" | tee /home/agentuser/gptscript.log"]
+CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$AGENT_FILE \"$COMMAND_STRING\" | tee /home/agentuser/gptscript.log"]

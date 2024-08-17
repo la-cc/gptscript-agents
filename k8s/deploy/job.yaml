@@ -13,7 +13,7 @@ spec:
       serviceAccountName: gptscript-agent-sa  # Use the ServiceAccount
       containers:
       - name: gptscript-agent
-        image: ghcr.io/la-cc/gpt-script-agents:0.1.0
+        image: ghcr.io/la-cc/gpt-script-agents:0.1.2
         imagePullPolicy: IfNotPresent
         env:
         - name: GPTSCRIPT_DEFAULT_MODEL
@@ -31,11 +31,11 @@ spec:
             secretKeyRef:
               name: openai-api-key-secret
               key: api-key
-        - name: MERGED_AGENT_FILE
+        - name: AGENT_FILE
           valueFrom:
             configMapKeyRef:
               name: gptscript-agent-config
-              key: MERGED_AGENT_FILE
+              key: AGENT_FILE
         - name: COMMAND_STRING
           valueFrom:
             configMapKeyRef:
