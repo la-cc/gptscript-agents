@@ -46,6 +46,8 @@ ENV OPENAI_API_KEY=""
 ENV MERGED_AGENT_FILE="simple-cli-agent.gpt"
 ENV COMMAND_STRING=""
 ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
+ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
+ENV GPTSCRIPT_WORKSPACE="/home/agentuser/workspace"
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -63,8 +65,8 @@ COPY --from=builder /usr/local/bin/gptscript /usr/local/bin/gptscript
 # Create a non-root user 'agentuser'
 RUN addgroup -S agentuser && adduser -S agentuser -G agentuser
 
-# Create cache directory with appropriate permissions
-RUN mkdir -p $GPTSCRIPT_CACHE_DIR && chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR
+# Create cache, config, and workspace directories with appropriate permissions
+RUN mkdir -p $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE && chown -R agentuser:agentuser $GPTSCRIPT_CACHE_DIR $GPTSCRIPT_WORKSPACE
 
 # Set work directory and switch to non-root user
 WORKDIR /home/agentuser
@@ -74,4 +76,4 @@ USER agentuser
 
 # Default command to run a specific agent based on env variables
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["gptscript --workspace /home/agentuser/gpt-agents --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]
+CMD ["gptscript --workspace \"$GPTSCRIPT_WORKSPACE\" --disable-cache --cache-dir \"$GPTSCRIPT_CACHE_DIR\" --config \"$GPTSCRIPT_CONFIG\" --default-model \"$MODEL\" --openai-base-url \"${OPENAI_BASE_URL:-https://api.openai.com/v1}\" --openai-api-key \"$OPENAI_API_KEY\" /home/agentuser/gpt-agents/$MERGED_AGENT_FILE \"$COMMAND_STRING\""]

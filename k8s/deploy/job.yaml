@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
       - name: gptscript-agent
-        image: ghcr.io/la-cc/gpt-script-agents:latest
+        image: ghcr.io/la-cc/gpt-script-agents:0.0.5
         imagePullPolicy: IfNotPresent
         env:
         - name: MODEL
