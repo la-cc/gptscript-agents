@@ -7,6 +7,7 @@ data:
   OPENAI_BASE_URL: "https://api.openai.com/v1"
   AGENT_FILE: "simple-k8s-fix.gpt"
   COMMAND_STRING: "Does my cluster has any issues?"
+  OUTSIDE_AGENTS_FILES: ""
   #GPTSCRIPT_CACHE_DIR: "/home/agentuser/.cache/gptscript"
   #GPTSCRIPT_CONFIG: "/home/agentuser/.config/gptscript/config.yaml"
   #GPTSCRIPT_WORKSPACE: "/home/agentuser/workspace"

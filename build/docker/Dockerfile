@@ -48,6 +48,7 @@ ENV COMMAND_STRING=""
 ENV GPTSCRIPT_CACHE_DIR="/home/agentuser/.cache/gptscript"
 ENV GPTSCRIPT_CONFIG="/home/agentuser/.config/gptscript/config.yaml"
 ENV GPTSCRIPT_WORKSPACE="/home/agentuser/workspace"
+ENV OUTSIDE_AGENTS_FILES=""
 
 # Install runtime dependencies
 RUN apk add --no-cache \
@@ -75,13 +76,12 @@ RUN chown -R agentuser:agentuser /home/agentuser
 # Set work directory and switch to non-root user
 WORKDIR /home/agentuser
 
-# Copy agent files and change ownership
+# Copy agent files and scripts, and change ownership
 COPY /gpt-agents/ /home/agentuser/gpt-agents
-RUN chown -R agentuser:agentuser /home/agentuser/gpt-agents
+COPY /build/docker/scripts/entrypoint.sh /home/agentuser/entrypoint.sh
+RUN chown -R agentuser:agentuser /home/agentuser/gpt-agents /home/agentuser/entrypoint.sh
 
 USER agentuser
 
-# Default command for debugging (infinite sleep)
-ENTRYPOINT ["/bin/bash", "-c"]
-
-CMD ["gptscript --disable-cache /home/agentuser/gpt-agents/$AGENT_FILE \"$COMMAND_STRING\" | tee /home/agentuser/gptscript.log"]
+# Set the entrypoint script
+ENTRYPOINT ["/bin/bash", "/home/agentuser/entrypoint.sh"]
