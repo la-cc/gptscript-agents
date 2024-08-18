@@ -1,5 +1,4 @@
-# select docker image
-IGOR_DOCKER_IMAGE=ghcr.io/la-cc/k8s-pg-to-s3-cronjob:0.0.0
+IGOR_DOCKER_IMAGE=ghcr.io/la-cc/gptscript-agents:0.1.5
 IGOR_DOCKER_COMMAND=            # run this command inside the docker container
 IGOR_DOCKER_PULL=0              # force pulling the image before starting the container (0/1)
 IGOR_DOCKER_RM=1                # remove container on exit (0/1)

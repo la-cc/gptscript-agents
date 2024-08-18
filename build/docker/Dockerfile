@@ -2,7 +2,7 @@
 FROM python:3.11-alpine as builder
 
 LABEL maintainer="la-cc@github"
-LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
+LABEL org.opencontainers.image.source="https://github.com/la-cc/gptscript-agents"
 LABEL email="artem@lajko.dev"
 
 # Install build dependencies
@@ -36,7 +36,7 @@ FROM python:3.11-alpine
 
 # Metadata as defined in OCI image spec annotations
 LABEL maintainer="la-cc@github"
-LABEL org.opencontainers.image.source="https://github.com/la-cc/gpt-script-agents"
+LABEL org.opencontainers.image.source="https://github.com/la-cc/gptscript-agents"
 LABEL email="artem@lajko.dev"
 
 # Set environment variables
