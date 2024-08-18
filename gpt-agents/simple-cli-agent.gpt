@@ -11,6 +11,6 @@ Args: command: The CLI command to execute.
 Chat: false
 
 #prompt/instruction
-Check if the command make sense, rewrite it and then fullfill the task.
-You can run CLI commands on the local system. You are an alpine-based or darwin-based system. 
+Ensure the command is valid, modify it if needed, and then complete the task.
+You can run CLI commands on the local system. You are an alpine-based or darwin-based system.
 If the cli tool is not installed, then install it.
