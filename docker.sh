@@ -3,8 +3,8 @@ REGISTRY="ghcr.io/la-cc"
 
 # check if git is installed
 if ! [ -x "$(command -v git)" ]; then
-  echo 'Error: git is not installed.' >&2
-  exit -1
+    echo 'Error: git is not installed.' >&2
+    exit -1
 fi
 
 # get current tag information
@@ -32,4 +32,4 @@ echo "Building image with tag $TAG"
 
 ${cli_cmd} build . \
     -f build/docker/Dockerfile \
-    -t $(echo "$REGISTRY/k8s-pg-to-s3-cronjob:$TAG")
+    -t $(echo "$REGISTRY/gptscript-agents:$TAG")
