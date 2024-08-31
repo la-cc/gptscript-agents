@@ -10,7 +10,7 @@ RUN apk add --no-cache \
     bash \
     curl \
     jq \
-    && apk add --no-cache --virtual .build-deps \
+    openssh-client && apk add --no-cache --virtual .build-deps \
     gcc \
     musl-dev \
     libffi-dev \
@@ -56,7 +56,8 @@ RUN apk add --no-cache \
     curl \
     jq \
     libstdc++ \
-    libgcc
+    libgcc \
+    openssh-client
 
 # Copy installed binaries and libraries from the builder stage
 COPY --from=builder /usr/local/bin/kubectl /usr/local/bin/kubectl
